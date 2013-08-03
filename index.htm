@@ -1,0 +1,347 @@
+<html>
+<head>
+<script src="jquery.js" ></script>
+
+<script>
+
+$(document).ready(function(){
+
+
+var div=  $('#divContainer div').find('div')
+
+
+
+$.each(div,function(index, data){
+
+$(data).attr('id',(index+1));
+
+$(data).bind('click',function(){move(data)});
+
+
+
+
+})
+
+$('#divContainer').hide();
+$('#btnNewGame').click(function(){NewGame()});
+
+
+})
+
+var cols=3;
+var max = 9
+
+function NewGame()
+{
+ $('#divContainer').css('opacity','1');
+ $('#finish').remove();
+
+ var div = $('#divContainer div').find('div')
+ var temp=new Array();
+ moves=0;
+ 
+ 
+ $('#divContainer').fadeIn('slow');
+ 
+ $.each(div,function(index, data){
+
+  $(data).removeClass().addClass( 'class-'+(getUniqueue(div,temp)+1))
+
+
+ }) 
+
+ createStatus();
+ ShowTimer();
+
+ 
+}
+
+
+
+
+function getUniqueue(array,temp)
+{
+ var no = -1;
+ if(temp.length < array.length)
+  {
+   do
+   {
+    no=Math.floor(Math.random()*array.length); 
+   }while($.inArray(no,temp) > -1);
+   temp[temp.length++] = no;
+  }
+ return no;
+}
+
+
+
+
+
+function move (obj)
+{
+ var no = parseInt(obj.id);
+ var possible= false;
+
+ var right = no+3
+ var left  = no-3
+ var up    = no-1
+ var down  = no+1
+
+ if(no%3 == 0) down=-1;
+ if(no%3 == 1) up=-1
+
+ var possibleMoves = new Array(left,right,up,down)
+ 
+ $.each(possibleMoves,function (index, data)
+ {
+  if(data > 0 && data < 10 )
+   {
+        
+    if($('#'+data).hasClass('class-9') )
+    {
+     
+	
+     $('#'+data).removeClass().addClass(obj.className);
+     $(obj).removeClass().addClass('class-9');
+     possible=true;
+     moves++;
+
+    }
+
+   }
+  
+ })
+
+ if(possible) $('#spanMoves').html('  Moves : '+moves);
+
+
+}
+
+
+var objTimer;
+var sec=0;
+var min = 0;
+var moves =0;
+
+function createStatus()
+{
+
+ $('#divStatus').empty();
+ $('<span id=spanTime ></span>').appendTo('#divStatus');
+ $('<span id=spanMoves ></span>').appendTo('#divStatus');
+
+
+
+
+}
+
+
+
+function ShowTimer()
+{
+
+
+ 
+
+if(objTimer!='undefined')
+{
+  clearInterval(objTimer);
+  sec=0;
+  min=0;
+}
+var spanTimer=$('#spanTime');
+
+
+
+objTimer=setInterval(function(){nTimer(spanTimer)},1000);
+
+}
+
+
+function nTimer(obj)
+{
+ if( checkGameOver()) showFinish()
+ sec++;
+ if(sec > 60 ) min ++;
+ obj.html('Time : ' + min + ":" + sec);
+ // alert(sec + " min : " +min);
+
+}
+
+function checkGameOver()
+{
+ var t=true; 
+
+
+ $.each( $('#divContainer div').find('div'),function(index, data){
+
+// alert(data.id + " = " + data.className.split('-')[1] );
+
+ if(data.id != (data.className.split('-')[1] ))
+  t=false;
+
+
+ 
+
+})
+ return t; 
+
+}
+
+function showFinish()
+{
+ clearInterval(objTimer);
+
+ var h = $('#divContainer').height()
+ var w = $('#divContainer').width();
+
+ $('#divContainer').css('opacity','0.25');
+
+ $('<span id="finish" > Game Over </span> ').appendTo('#divContainer');
+
+ $('#finish').addClass('finish'); 
+ 
+ 
+
+
+}
+
+
+
+
+</script>
+
+<style>
+
+.finish
+{
+  background-color: #229922; 
+  font-size:3em;
+  position:relative;
+  clear:left;
+  top:-50%;
+  left:100px;
+  padding:5px;
+  border: 1px solid #123
+  z-index: 1000;
+
+}
+
+#divContainer
+{
+
+ display:inline;
+
+}
+
+#divStatus
+{
+
+ background-color:#669966;
+ color:white;
+ display:inline;
+ padding-left:20px;
+ padding-right:20px;
+}
+
+
+#divContainer div
+{
+
+ 
+ width:113px;
+ height:115px;
+
+ background-color: #229922;
+ float:left;
+ text-align:center;
+ vertical-align:middle;
+ border:1px solid #123
+ 
+
+}
+
+
+
+
+.class-0{background:url(images2/0.png) no-repeat center center;}
+.class-1{background:url(images2/1.png) no-repeat center center;}	.class-2{background:url(images2/2.png) no-repeat center center;}
+.class-3{background:url(images2/3.png) no-repeat center center;}	.class-4{background:url(images2/4.png) no-repeat center center;}
+.class-5{background:url(images2/5.png) no-repeat center center;}
+.class-6{background:url(images2/6.png) no-repeat center center;}
+.class-7{background:url(images2/7.png) no-repeat center center;}	.class-8{background:url(images2/8.png) no-repeat center center;}
+.class-9
+{
+
+ background-color:#ffffcc;
+
+}
+
+
+
+
+</style>
+</head>
+<body>
+
+<button onclick=showFinish() ></button>
+
+<button id="btnNewGame" >New Game</button>
+
+<div id="divStatus" >
+
+</div>
+<br>
+
+<div id="divContainer" >
+
+<div id="divRow1">
+<div name="Number"  >
+
+</div>
+<div name="Number" >
+
+</div>
+<div name="Number" >
+
+</div>
+
+
+</div>
+<div id="divRow2">
+
+<div name="Number" >
+
+</div>
+<div name="Number" >
+
+</div>
+<div name="Number">
+
+</div>
+
+
+
+
+</div>
+<div id="divRow3">
+
+<div  name="Number" >
+
+</div>
+<div  name="Number" >
+
+</div>
+<div  name="Number">
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</body>
+</html>
